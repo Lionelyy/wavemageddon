@@ -7,7 +7,8 @@ public class Enemy : MonoBehaviour
 
     #region Properties
 
-	public int size = 0;
+	public int size { get; private set; }
+	public bool isPooled { get; set; }
 
     #endregion
 
@@ -23,6 +24,8 @@ public class Enemy : MonoBehaviour
 
 	private void Awake()
 	{
+		isPooled = true;
+		size = 0;
 		myRB = GetComponent<Rigidbody2D> ();
 		myRenderer = GetComponent<SpriteRenderer> ();
 		myRenderer.sprite = _levelSprites [0];
@@ -30,7 +33,10 @@ public class Enemy : MonoBehaviour
 
 	private void Update()
 	{
-		Move ();
+		if (!isPooled)
+		{
+			Move ();
+		}
 	}
 
     private void OnTriggerEnter2D(Collider2D collision)

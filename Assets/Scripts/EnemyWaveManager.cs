@@ -35,7 +35,7 @@ public class EnemyWaveManager : MonoBehaviour
 
 	private void Awake()
 	{
-		_groupDelay = new WaitForSeconds (1);
+		_groupDelay = new WaitForSeconds (1.2f);
 		_enemiesInWave = new List<Enemy> ();
 	}
 
@@ -59,6 +59,7 @@ public class EnemyWaveManager : MonoBehaviour
 		//reset enemy positions and levels
 		for (int i = 0; i < _enemiesInWave.Count; i++)
 		{
+			_enemiesInWave [i].isPooled = true;
 			_enemiesInWave [i].Reset(_enemyRootPosition);
 		}
 
@@ -75,15 +76,6 @@ public class EnemyWaveManager : MonoBehaviour
 		}
 	}
 
-	#endregion
-
-    #region Public Methods
-
-    public void StartWave(int waveNumber)
-    {
-		StartCoroutine (InitializeWave (waveNumber));
-    }
-
 	private IEnumerator InitializeWave(int waveNumber)
 	{
 		//Initialize the new enemy count and enemy upgrade count
@@ -95,38 +87,87 @@ public class EnemyWaveManager : MonoBehaviour
 		InitializePool ();
 
 		//determine number of groups (group == up to 3 enemies sharing one column)
-		int maxNumOfGroups = _enemiesInWave.Count / 3;
-		int numOfGroups = Random.Range (maxNumOfGroups / 2, maxNumOfGroups);
+		int minNumOfGroups = _enemiesInWave.Count / 3;
+		if (minNumOfGroups <= 0)
+		{
+			minNumOfGroups = 1;
+		}
+		int numOfGroups = Random.Range (minNumOfGroups, _enemiesInWave.Count);
 
-		//iterate through groups to set new positions
+		//determine number of enemies per group
+		int[] groupSizes = new int[numOfGroups];
+		int enemiesToGroup = _enemiesInWave.Count;
+
+		while (enemiesToGroup > 0)
+		{
+			int random = Random.Range (0, groupSizes.Length);
+
+			if (groupSizes [random] < 3)
+			{
+				groupSizes [random]++;
+				enemiesToGroup--;
+			}
+		}
+
+		//iterate through groups to set enemy positions
 		int currentIndex = 0;
 		int targetIndex = 0;
-		Vector3 newPos = Vector3.zero;
-		Vector3 lastPos = Vector3.zero;
-		List<Enemy> currentGroup;
 
 		for (int i = 0; i < numOfGroups; i++)
 		{
-			targetIndex = currentIndex + Random.Range (0, 3);
+			Vector3 newPos = Vector3.zero;
+			List<Vector3> currentGroup = new List<Vector3> ();
+
+			targetIndex = currentIndex + groupSizes[i];
 			for (int j = currentIndex; j < targetIndex; j++)
 			{
-				do
+				newPos = new Vector3 (0, Random.Range (_minY, _maxY), 0);
+
+				while (!IsValidGap(newPos, currentGroup))
 				{
 					newPos = new Vector3 (0, Random.Range (_minY, _maxY), 0);
 					yield return null;
-				} 
-				while (Vector3.Distance (newPos, lastPos) < _minVertGap);
-
+				}
 				_enemiesInWave [j].SetPosition(_enemyRootPosition + newPos);
-				lastPos = newPos;
+				currentGroup.Add (newPos);
 
 				currentIndex = j;
+
+				_enemiesInWave [j].isPooled = false;
+				print ("Here");
 			}
 
 			yield return _groupDelay;
 		}
-		print ("Hello");
+		print ("Here Too");
 	}
+
+	private bool IsValidGap(Vector3 myPosition, List<Vector3> groupPositions)
+	{
+		if (groupPositions.Count == 0)
+		{
+			return true;
+		}
+
+		bool value = true;
+		for (int i = 0; i < groupPositions.Count; i++)
+		{
+			if (Vector3.Distance (myPosition, groupPositions [i]) > _minVertGap)
+			{
+				value = false;
+			}
+		}
+		return value;
+	}
+
+	#endregion
+
+    #region Public Methods
+
+    public void StartWave(int waveNumber)
+    {
+		StartCoroutine (InitializeWave (waveNumber));
+    }
 
 	public void UpdateEnemiesLeft(int value)
 	{
