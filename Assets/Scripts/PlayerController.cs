@@ -75,8 +75,10 @@ public class PlayerController : MonoBehaviour
             if (_spriteAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash == _shootHash &&
                 _spriteAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.9)
             {
-                GameObject bullet = Instantiate(_bulletPrefab, _bulletSpawn);
-                bullet.transform.localPosition = Vector3.zero;
+                GameObject bullet = Instantiate(_bulletPrefab);//, _bulletSpawn);
+                bullet.transform.transform.position = _bulletSpawn.transform.position;
+                bullet.transform.transform.rotation = _bulletSpawn.transform.rotation;
+                //bullet.transform.localPosition = Vector3.zero;
 
                 _isShooting = false;
             }
