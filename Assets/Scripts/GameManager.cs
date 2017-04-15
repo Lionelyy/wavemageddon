@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int _enemyWaveDelay;
 
     private WaitForSeconds _enemyWaveDelayWFS;
+	private bool _callingWave = false;
 
     #endregion
 
@@ -52,8 +53,9 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (_enemyWaveManager != null && _enemyWaveManager.enemiesLeft <= 0)
+		if (_enemyWaveManager != null && _enemyWaveManager.enemiesLeft <= 0 && !_callingWave)
         {
+			_callingWave = true;
             currentWave++;
             StartCoroutine(CallStartWave());
         }
@@ -66,6 +68,7 @@ public class GameManager : MonoBehaviour
         {
             _enemyWaveManager.StartWave(currentWave);
         }
+		_callingWave = false;
     }
 
     #endregion
