@@ -1,11 +1,15 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
     #region Private Members
-    
+
+    [SerializeField] private Slider _gasMeter;
+    [SerializeField] private int _gasReleaseDelay;
+    [SerializeField] private int _gasReleasePower;
+
     [SerializeField] private float _speed;
     [SerializeField] private float _tiltSpeed;
 
@@ -18,6 +22,14 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private int _boundaryColumnLeft;
     [SerializeField] private int _boundaryColumnRight;
+
+    [SerializeField] private int _invincibilityTime;
+
+    private int _gasAmount = 0;
+    private WaitForSeconds _waitForGasRelease;
+
+    private bool _isInvincible;
+    private WaitForSeconds _waitForInvincibilityDone;
 
     private bool _isShooting = false;
     private int _shootHash;
@@ -37,6 +49,8 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         _shootHash = Animator.StringToHash("Shooting");
+        _waitForGasRelease = new WaitForSeconds(_gasReleaseDelay);
+        _waitForInvincibilityDone = new WaitForSeconds(_invincibilityTime);
     }
 
     private void Update()
@@ -100,13 +114,13 @@ public class PlayerController : MonoBehaviour
     {
         float finalPositionX = _leftXBoundary + 0.5f + column;
         float startingPositionX = transform.position.x;
-        Vector3 finalPos = new Vector3(finalPositionX, transform.position.y, 0.0f);
         float tilt = _currentColumn > column ? _sufterTilt : -_sufterTilt;
         Quaternion tiltTo = Quaternion.Euler(0, 0, tilt);
         Quaternion tiltBack = Quaternion.Euler(0, 0, 0);
 
         while (Mathf.Abs(transform.position.x - finalPositionX) >= float.Epsilon)
         {
+            Vector3 finalPos = new Vector3(finalPositionX, transform.position.y, 0.0f);
             transform.position = Vector3.MoveTowards(transform.position, finalPos, _speed * Time.deltaTime);
             float rotationLerp = Mathf.InverseLerp(startingPositionX, finalPositionX, transform.position.x);
             
@@ -125,6 +139,57 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Enemy"))
+        {
+            Enemy enemy = collision.gameObject.GetComponent<Enemy>();
+
+            if (enemy != null && !_isInvincible)
+            {
+                MoveColumns(-enemy.size);
+                StartCoroutine(HitByEnemy());
+            }
+        }
+        else if (collision.CompareTag("Pickup"))
+        {
+            Pickup pickup = collision.gameObject.GetComponent<Pickup>();
+
+            if (pickup != null)
+            {
+                _gasAmount += pickup.value;
+                _gasMeter.value = _gasAmount;
+
+                if (_gasAmount >= _gasMeter.maxValue)
+                {
+                    StartCoroutine(ReleaseFart());
+                }
+            }
+        }
+    }
+
+    private IEnumerator HitByEnemy()
+    {
+        _spriteAnimator.SetBool("IsInvincible", true);
+        _isInvincible = true;
+
+        yield return _waitForInvincibilityDone;
+
+        _isInvincible = false;
+        _spriteAnimator.SetBool("IsInvincible", false);
+    }
+
+    private IEnumerator ReleaseFart()
+    {
+        _spriteAnimator.SetBool("GasOverload", true);
+
+        yield return _waitForGasRelease;
+        
+        _spriteAnimator.SetBool("GasOverload", false);
+
+        MoveColumns(_gasReleasePower);
+    }
+
     #endregion
 
     #region Public Methods
@@ -137,6 +202,17 @@ public class PlayerController : MonoBehaviour
         {
             StartCoroutine(MoveToColumn(_currentColumn + value));
         }
+    }
+
+    // todo: remove these
+    public void TriggerFart()
+    {
+        StartCoroutine(ReleaseFart());
+    }
+
+    public void TriggerInvi()
+    {
+        StartCoroutine(HitByEnemy());
     }
 
     #endregion

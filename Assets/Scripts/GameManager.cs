@@ -7,9 +7,7 @@ public class GameManager : MonoBehaviour
     #region Private Members
 
     [SerializeField] private EnemyWaveManager _enemyWaveManager;
-
     [SerializeField] private int _columns;
-
     [SerializeField] private int _enemyWaveDelay;
 
     private WaitForSeconds _enemyWaveDelayWFS;
@@ -19,10 +17,14 @@ public class GameManager : MonoBehaviour
     #region Properties
 
     public int columns { get { return _columns; } }
-
     public int currentWave { get; private set; }
-
     public static GameManager instance { get; private set; }
+
+    #region Static Properties
+
+    public static float speed { get; private set; }
+
+    #endregion
 
     #endregion
 
@@ -44,6 +46,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         _enemyWaveDelayWFS = new WaitForSeconds(_enemyWaveDelay);
+        speed = 5;
         currentWave = 0;
     }
 
