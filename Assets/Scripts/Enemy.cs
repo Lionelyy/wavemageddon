@@ -15,6 +15,7 @@ public class Enemy : MonoBehaviour
 
 	[SerializeField] private Sprite[] _levelSprites;
 	private SpriteRenderer myRenderer;
+	private Rigidbody2D myRB;
 
 	#endregion
 
@@ -22,14 +23,25 @@ public class Enemy : MonoBehaviour
 
 	private void Awake()
 	{
+		myRB = GetComponent<Rigidbody2D> ();
 		myRenderer = GetComponent<SpriteRenderer> ();
 		myRenderer.sprite = _levelSprites [0];
+	}
+
+	private void Update()
+	{
+		Move ();
 	}
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
 
     }
+
+	private void Move()
+	{
+		myRB.MovePosition (transform.position - new Vector3(Time.deltaTime, 0, 0));
+	}
 
     #endregion
 
