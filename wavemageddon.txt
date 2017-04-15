@@ -1,0 +1,29 @@
+- we have x columns, we can move vertically freely but no horz
+- horz movement happens when we pick up beans or we get pushed back by waves
+so we'll have 
+MoveColumn(int columns)
+- for every can of beans we fill up the gas meter, when it's full we advance
+by 1 column
+- gas meter needs 5 points to be filled, soda gives 1, milk 2, beans 3
+- after the gas meter fills up,
+it flashes and the player has limited time before being pushed 1 column forward
+- every wave that hits the player moves the player back x columns (wave
+size matters)
+- waves have 'life bars', each bullet makes the wave smaller (until gone)
+- the wave prefab holds sprites of different sizes and is responsible
+for updating the wave size
+
+- progression between waves
+moar waves
+bigger waves
+tighter packs of waves
+faster waves (windddddddd)
+after 10 waves of waves a boss that creates waves, has hit points
+doesn't move like waves
+
+- player will have ontrigger
+
+- gamemanger for levels/number of waves passed
+
+4.5 * ratio = camera size
+

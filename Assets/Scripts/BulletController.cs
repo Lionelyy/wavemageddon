@@ -14,7 +14,7 @@ public class BulletController : MonoBehaviour
 
     private void Update()
     {
-        transform.position += (Vector3.left * Time.deltaTime * speed);
+        transform.position += (Vector3.right * Time.deltaTime * speed);
     }
 
     #endregion
