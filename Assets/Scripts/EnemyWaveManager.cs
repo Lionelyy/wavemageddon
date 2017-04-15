@@ -20,6 +20,8 @@ public class EnemyWaveManager : MonoBehaviour
 	[SerializeField] private float _enemyCountModifier = 1.4f;
 	[SerializeField] private float _enemyUpgradeCountModifier = 0.50f;
 	[SerializeField] private Vector3 _enemyRootPosition;
+	[SerializeField] private float _maxY = 2;
+	[SerializeField] private float _minY = -2;
 
 	private List<Enemy> _enemiesInWave; //this is the pool of the waves haha get it
 	private int _currentEnemyCount = 0; //this is the number of waves in the pool haha get it
@@ -41,7 +43,6 @@ public class EnemyWaveManager : MonoBehaviour
 
 	private void InitializePool()
 	{
-
 		//Add as many enemies to the pool as are required by the current wave
 		int difference = 0;
 		if (_currentEnemyCount <= _maxEnemyCount && (difference = _currentEnemyCount - _enemiesInWave.Count) > 0)
@@ -55,7 +56,7 @@ public class EnemyWaveManager : MonoBehaviour
 		//reset the enemy positions and levels
 		for (int i = 0; i < _enemiesInWave.Count; i++)
 		{
-			_enemiesInWave [i].Reset(_enemyRootPosition);
+			_enemiesInWave [i].Reset(_enemyRootPosition + new Vector3(0, Random.Range(_minY, _maxY), 0));
 		}
 
 		//upgrade the correct amount of enemies
