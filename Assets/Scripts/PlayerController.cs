@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Slider _gasMeter;
     [SerializeField] private int _gasReleaseDelay;
     [SerializeField] private int _gasReleasePower;
+    [SerializeField] private int _maxGasAmount;
 
     [SerializeField] private float _speed;
     [SerializeField] private float _tiltSpeed;
@@ -51,6 +52,8 @@ public class PlayerController : MonoBehaviour
         _shootHash = Animator.StringToHash("Shooting");
         _waitForGasRelease = new WaitForSeconds(_gasReleaseDelay);
         _waitForInvincibilityDone = new WaitForSeconds(_invincibilityTime);
+
+        _gasMeter.maxValue = _maxGasAmount;
     }
 
     private void Update()
@@ -160,7 +163,7 @@ public class PlayerController : MonoBehaviour
                 _gasAmount += pickup.value;
                 _gasMeter.value = _gasAmount;
 
-                if (_gasAmount >= _gasMeter.maxValue)
+                if (_gasAmount >= _maxGasAmount)
                 {
                     StartCoroutine(ReleaseFart());
                 }
@@ -188,6 +191,15 @@ public class PlayerController : MonoBehaviour
         _spriteAnimator.SetBool("GasOverload", false);
 
         MoveColumns(_gasReleasePower);
+
+        _gasAmount -= _maxGasAmount;
+
+        if (_gasAmount < 0)
+        {
+            _gasAmount = 0;
+        }
+
+        _gasMeter.value = _gasAmount;
     }
 
     #endregion
@@ -213,6 +225,17 @@ public class PlayerController : MonoBehaviour
     public void TriggerInvi()
     {
         StartCoroutine(HitByEnemy());
+    }
+
+    public void PickupSomething()
+    {
+        _gasAmount += 3;
+        _gasMeter.value = _gasAmount;
+
+        if (_gasAmount >= _maxGasAmount)
+        {
+            StartCoroutine(ReleaseFart());
+        }
     }
 
     #endregion
