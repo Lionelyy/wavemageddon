@@ -2,11 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BulletController : MonoBehaviour
+public class BulletController : MonoBehaviour, IPoolableObject
 {
-    #region Public Variables
+    #region Private Variables
 
-    public float speed;
+    [SerializeField] private float _speed;
+
+    #endregion
+
+    #region Properties
+
+    public bool isPooled { get; set; }
+    public bool canReturnToPool { get; private set; }
 
     #endregion
 
@@ -14,7 +21,22 @@ public class BulletController : MonoBehaviour
 
     private void Update()
     {
-        transform.position += (Vector3.right * Time.deltaTime * speed);
+        transform.position += (Vector3.right * Time.deltaTime * _speed);
+
+        if (transform.position.x > GameManager.bulletXPositionCutoff)
+        {
+            canReturnToPool = true;
+            gameObject.SetActive(false);
+        }
+    }
+
+    #endregion
+
+    #region Public Methods
+
+    public void DisableObject()
+    {
+        canReturnToPool = false;
     }
 
     #endregion

@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int _columns;
     [SerializeField] private int _enemyWaveDelay;
 
+    [SerializeField] private int _bulletXPositionCutoff;
+
     private WaitForSeconds _enemyWaveDelayWFS;
 	private bool _callingWave = false;
 
@@ -24,6 +26,7 @@ public class GameManager : MonoBehaviour
     #region Static Properties
 
     public static float speed { get; private set; }
+    public static float bulletXPositionCutoff { get; private set; }
 
     #endregion
 
@@ -48,6 +51,8 @@ public class GameManager : MonoBehaviour
     {
         _enemyWaveDelayWFS = new WaitForSeconds(_enemyWaveDelay);
         speed = 5;
+        bulletXPositionCutoff = _bulletXPositionCutoff;
+
         currentWave = 0;
     }
 
