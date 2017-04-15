@@ -49,7 +49,7 @@ public class Enemy : MonoBehaviour
 
 	public void Reset(Vector3 position)
 	{
-		transform.position = position;
+		SetPosition (position);
 		ModifySize (0);
 	}
 
@@ -57,6 +57,11 @@ public class Enemy : MonoBehaviour
 	{
 		size += value;
 		myRenderer.sprite = _levelSprites [size];
+	}
+
+	public void SetPosition(Vector3 position)
+	{
+		transform.position = position;
 	}
 
 	#endregion
