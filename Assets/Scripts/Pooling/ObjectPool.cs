@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Timers;
+using UnityEngine;
 
 public class ObjectPool<T> where T:IPoolableObject
 {
@@ -43,6 +44,7 @@ public class ObjectPool<T> where T:IPoolableObject
 
         _objectCheckTimer = new Timer(1000);
         _objectCheckTimer.Elapsed += OnObjectCheckTimerTick;
+        _objectCheckTimer.Start();
 
         CreateAndFillPool();
     }
@@ -59,8 +61,8 @@ public class ObjectPool<T> where T:IPoolableObject
             {
                 if (_pooledObjects[i].canReturnToPool)
                 {
+                    Debug.Log("can return");
                     _pooledObjects[i].isPooled = true;
-                    _pooledObjects[i].DisableObject();
                 }
             }
         }
@@ -85,6 +87,7 @@ public class ObjectPool<T> where T:IPoolableObject
 
         if (newObject != null)
         {
+            newObject.isPooled = true;
             _pooledObjects.Add(newObject);
         }
 
@@ -99,11 +102,13 @@ public class ObjectPool<T> where T:IPoolableObject
     {
         if (_pooledObjects == null) return default(T);
 
+        Debug.Log(_pooledObjects.Count);
+
         for (int i = 0; i < _pooledObjects.Count; i++)
         {
             if (_pooledObjects[i].isPooled)
             {
-                _pooledObjects[i].isPooled = true;
+                _pooledObjects[i].isPooled = false;
                 return _pooledObjects[i];
             }
         }

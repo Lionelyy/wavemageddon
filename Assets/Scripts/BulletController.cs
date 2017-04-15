@@ -22,6 +22,12 @@ public class BulletController : MonoBehaviour, IPoolableObject
     private void Update()
     {
         transform.position += (Vector3.right * Time.deltaTime * _speed);
+
+        if (transform.position.x > GameManager.bulletXPositionCutoff)
+        {
+            canReturnToPool = true;
+            gameObject.SetActive(false);
+        }
     }
 
     #endregion
@@ -30,7 +36,7 @@ public class BulletController : MonoBehaviour, IPoolableObject
 
     public void DisableObject()
     {
-        gameObject.SetActive(false);
+        canReturnToPool = false;
     }
 
     #endregion

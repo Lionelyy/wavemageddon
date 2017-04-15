@@ -106,6 +106,8 @@ public class PlayerController : MonoBehaviour
                     {
                         bulletCtrl.transform.transform.position = _bulletSpawn.transform.position;
                         bulletCtrl.transform.transform.rotation = _bulletSpawn.transform.rotation;
+
+                        bulletCtrl.gameObject.SetActive(true);
                     }
 
                     _isShooting = false;
