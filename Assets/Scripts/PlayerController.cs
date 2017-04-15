@@ -26,11 +26,15 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private int _invincibilityTime;
 
+    [SerializeField] private int _bulletPoolSize;
+
     private int _gasAmount = 0;
     private WaitForSeconds _waitForGasRelease;
 
     private bool _isInvincible;
     private WaitForSeconds _waitForInvincibilityDone;
+
+    private ObjectPool<BulletController> _bulletsPool;
 
     private bool _isShooting = false;
     private int _shootHash;
@@ -52,6 +56,8 @@ public class PlayerController : MonoBehaviour
         _shootHash = Animator.StringToHash("Shooting");
         _waitForGasRelease = new WaitForSeconds(_gasReleaseDelay);
         _waitForInvincibilityDone = new WaitForSeconds(_invincibilityTime);
+
+        _bulletsPool = new ObjectPool<BulletController>(_bulletPoolSize, InstantiateBullet);
 
         _gasMeter.maxValue = _maxGasAmount;
     }
@@ -81,25 +87,39 @@ public class PlayerController : MonoBehaviour
 
         transform.position = newPos;
 
-        if (Input.GetButton("Fire1") && !_isShooting)
+        if (_bulletsPool != null)
         {
-            _isShooting = true;
-            _spriteAnimator.SetTrigger("Shoot");
-        }
-        else if (_isShooting)
-        {
-            // Check whether we almost finished with the shooting animation
-            if (_spriteAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash == _shootHash &&
-                _spriteAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.9)
+            if (Input.GetButton("Fire1") && !_isShooting)
             {
-                GameObject bullet = Instantiate(_bulletPrefab);//, _bulletSpawn);
-                bullet.transform.transform.position = _bulletSpawn.transform.position;
-                bullet.transform.transform.rotation = _bulletSpawn.transform.rotation;
-                //bullet.transform.localPosition = Vector3.zero;
+                _isShooting = true;
+                _spriteAnimator.SetTrigger("Shoot");
+            }
+            else if (_isShooting)
+            {
+                // Check whether we almost finished with the shooting animation
+                if (_spriteAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash == _shootHash &&
+                    _spriteAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.9)
+                {
+                    BulletController bulletCtrl = _bulletsPool.GetPooledObject();
 
-                _isShooting = false;
+                    if (bulletCtrl != null)
+                    {
+                        bulletCtrl.transform.transform.position = _bulletSpawn.transform.position;
+                        bulletCtrl.transform.transform.rotation = _bulletSpawn.transform.rotation;
+                    }
+
+                    _isShooting = false;
+                }
             }
         }
+    }
+
+    private BulletController InstantiateBullet()
+    {
+        GameObject bullet = Instantiate(_bulletPrefab);
+        bullet.SetActive(false);
+
+        return bullet.GetComponent<BulletController>();
     }
 
     private int GetCurrentColumn(float camX)
