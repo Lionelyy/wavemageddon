@@ -27,3 +27,13 @@ doesn't move like waves
 
 4.5 * ratio = camera size
 
+
+        if (transform.position.x > 0)
+        {
+            return numOfCols - (int)(maxXPlayerPosition - transform.position.x);
+        }
+        else
+        {
+            return (int)(transform.position.x - minXPlayerPosition);
+        }
+
