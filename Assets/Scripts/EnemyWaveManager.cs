@@ -88,7 +88,7 @@ public class EnemyWaveManager : MonoBehaviour
 		}
 
 		//determine number of groups (group == up to 3 enemies sharing one column)
-		int minNumOfGroups = _enemiesInWave.Count / 3;
+		int minNumOfGroups = Mathf.CeilToInt((float)_enemiesInWave.Count / 3);
 		if (minNumOfGroups <= 0)
 		{
 			minNumOfGroups = 1;
@@ -98,7 +98,7 @@ public class EnemyWaveManager : MonoBehaviour
 		//determine number of enemies per group
 		int[] groupSizes = new int[numOfGroups];
 		int enemiesToGroup = _enemiesInWave.Count;
-		Debug.Log ("Here");
+
 		while (enemiesToGroup > 0)
 		{
 			int random = Random.Range (0, groupSizes.Length);
@@ -108,10 +108,10 @@ public class EnemyWaveManager : MonoBehaviour
 				groupSizes [random]++;
 				enemiesToGroup--;
 			}
-			Debug.Log ("attempt: " + groupSizes[random] + " at " + random);
+			//Debug.Log ("attempt: " + groupSizes[random] + " at " + random);
 			yield return null;
 		}
-		Debug.Log ("Here");
+
 		//iterate through groups to set enemy positions
 		int currentIndex = 0;
 		int targetIndex = 0;
@@ -141,7 +141,7 @@ public class EnemyWaveManager : MonoBehaviour
 
 				currentIndex = j+1;
 			}
-			Debug.Log ("Here");
+
 			yield return _groupDelay;
 		}
 	}
