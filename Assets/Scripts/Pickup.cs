@@ -12,7 +12,14 @@ public class Pickup : MonoBehaviour
 
     private void Update()
     {
-        transform.position += (Vector3.left * Time.deltaTime * GameManager.speed);
+		if (transform.position.x > -GameManager.poolablesXPositionCutoff)
+		{
+			transform.position += (Vector3.left * Time.deltaTime * GameManager.speed);
+		} 
+		else
+		{
+			Destroy (gameObject);
+		}
     }
 
     #endregion
@@ -22,6 +29,7 @@ public class Pickup : MonoBehaviour
     public void InitialisePickup(int pickupValue)
     {
         value = pickupValue;
+		GetComponent<SpriteRenderer> ().sprite = GameManager.pickupSprites[value];
     }
 
     #endregion

@@ -188,8 +188,10 @@ public class PlayerController : MonoBehaviour
 
             if (pickup != null)
             {
-                _gasAmount += pickup.value;
+                _gasAmount += pickup.value + 1;
                 _gasMeter.value = _gasAmount;
+
+				Destroy (pickup.gameObject);
 
                 if (_gasAmount >= _maxGasAmount)
                 {

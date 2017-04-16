@@ -10,7 +10,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int _columns;
     [SerializeField] private float _enemyWaveDelay = 0.1f;
 
-    [SerializeField] private int _bulletXPositionCutoff;
+	[SerializeField] private int _poolablesXPositionCutoff;
+	[SerializeField] private Sprite[] _enemySprites;
+	[SerializeField] private Sprite[] _pickupSprites;
+	[SerializeField] private GameObject _pickupPrefab;
 
     private WaitForSeconds _enemyWaveDelayWFS;
 	private bool _callingWave = false;
@@ -26,7 +29,10 @@ public class GameManager : MonoBehaviour
     #region Static Properties
 
     public static float speed { get; private set; }
-    public static float bulletXPositionCutoff { get; private set; }
+    public static float poolablesXPositionCutoff { get; private set; }
+	public static Sprite[] enemySprites { get; private set; }
+	public static Sprite[] pickupSprites { get; private set; }
+	public static GameObject pickupPrefab { get; private set; }
 
     #endregion
 
@@ -50,8 +56,11 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         _enemyWaveDelayWFS = new WaitForSeconds(_enemyWaveDelay);
-        speed = 1;
-        bulletXPositionCutoff = _bulletXPositionCutoff;
+        speed = 1.4f;
+        poolablesXPositionCutoff = _poolablesXPositionCutoff;
+		enemySprites = _enemySprites;
+		pickupSprites = _pickupSprites;
+		pickupPrefab = _pickupPrefab;
 
         currentWave = 0;
     }

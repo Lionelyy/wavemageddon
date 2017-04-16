@@ -61,7 +61,7 @@ public class ObjectPool<T> where T:IPoolableObject
             {
                 if (_pooledObjects[i].canReturnToPool)
                 {
-                    Debug.Log("can return");
+					_pooledObjects[i].DisableObject ();
                     _pooledObjects[i].isPooled = true;
                 }
             }
@@ -101,8 +101,6 @@ public class ObjectPool<T> where T:IPoolableObject
     public T GetPooledObject()
     {
         if (_pooledObjects == null) return default(T);
-
-        Debug.Log(_pooledObjects.Count);
 
         for (int i = 0; i < _pooledObjects.Count; i++)
         {

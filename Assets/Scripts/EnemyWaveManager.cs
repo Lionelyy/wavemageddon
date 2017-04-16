@@ -6,7 +6,7 @@ public class EnemyWaveManager : MonoBehaviour
 {
     #region Properties
 
-    public int enemiesLeft { get; private set; }
+	public int enemiesLeft;
 
     #endregion
 
@@ -59,7 +59,7 @@ public class EnemyWaveManager : MonoBehaviour
 		//reset enemy positions and levels
 		for (int i = 0; i < _enemiesInWave.Count; i++)
 		{
-			_enemiesInWave [i].isPooled = true;
+			_enemiesInWave [i].stopped = true;
 			_enemiesInWave [i].Reset(_enemyRootPosition);
 		}
 	}
@@ -84,7 +84,7 @@ public class EnemyWaveManager : MonoBehaviour
 				random = Random.Range (0, _enemiesInWave.Count);
 				yield return null;
 			}
-			_enemiesInWave [random].ModifySize (1);
+			_enemiesInWave [random].ModifySize (_enemiesInWave[random].size + 1, true);
 		}
 
 		//determine number of groups (group == up to 3 enemies sharing one column)
@@ -137,12 +137,31 @@ public class EnemyWaveManager : MonoBehaviour
 
 			for (int j = currentIndex; j < targetIndex; j++) 
 			{
-				_enemiesInWave [j].isPooled = false;
+				_enemiesInWave [j].stopped = false;
 
 				currentIndex = j+1;
 			}
 
 			yield return _groupDelay;
+		}
+
+		//periodically scan the current wave to determine how many enemies are left in it
+		WaitForSeconds scanDelay = new WaitForSeconds(0.1f);
+
+		while (enemiesLeft > 0)
+		{
+			yield return scanDelay;
+			int enemyCount = 0;
+
+			for (int i = 0; i < _enemiesInWave.Count; i++)
+			{
+				if (!_enemiesInWave [i].stopped)
+				{
+					enemyCount++;
+				}
+			}
+
+			enemiesLeft = enemyCount;
 		}
 	}
 
