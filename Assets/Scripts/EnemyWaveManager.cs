@@ -62,18 +62,6 @@ public class EnemyWaveManager : MonoBehaviour
 			_enemiesInWave [i].isPooled = true;
 			_enemiesInWave [i].Reset(_enemyRootPosition);
 		}
-
-		//upgrade the correct amount of enemies
-		int lastRandom = 0;
-		for (int i = 0; i < _currentEnemyUpgradeCount; i++)
-		{
-			int random = Random.Range (0, _enemiesInWave.Count);
-			while (random == lastRandom || _enemiesInWave[random].size >= _maxEnemyLevel)
-			{
-				random = Random.Range (0, _enemiesInWave.Count);
-			}
-			_enemiesInWave [random].ModifySize (1);
-		}
 	}
 
 	private IEnumerator InitializeWave(int waveNumber)
@@ -85,6 +73,19 @@ public class EnemyWaveManager : MonoBehaviour
 		enemiesLeft = _currentEnemyCount;
 
 		InitializePool ();
+
+		//upgrade the correct amount of enemies
+		int lastRandom = 0;
+		for (int i = 0; i < _currentEnemyUpgradeCount; i++)
+		{
+			int random = Random.Range (0, _enemiesInWave.Count);
+			while (random == lastRandom || _enemiesInWave[random].size >= _maxEnemyLevel)
+			{
+				random = Random.Range (0, _enemiesInWave.Count);
+				yield return null;
+			}
+			_enemiesInWave [random].ModifySize (1);
+		}
 
 		//determine number of groups (group == up to 3 enemies sharing one column)
 		int minNumOfGroups = _enemiesInWave.Count / 3;
@@ -107,6 +108,8 @@ public class EnemyWaveManager : MonoBehaviour
 				groupSizes [random]++;
 				enemiesToGroup--;
 			}
+
+			yield return null;
 		}
 
 		//iterate through groups to set enemy positions

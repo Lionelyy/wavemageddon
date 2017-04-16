@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private EnemyWaveManager _enemyWaveManager;
     [SerializeField] private int _columns;
-    [SerializeField] private int _enemyWaveDelay;
+    [SerializeField] private float _enemyWaveDelay = 0.1f;
 
     [SerializeField] private int _bulletXPositionCutoff;
 
@@ -50,7 +50,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         _enemyWaveDelayWFS = new WaitForSeconds(_enemyWaveDelay);
-        speed = 5;
+        speed = 1;
         bulletXPositionCutoff = _bulletXPositionCutoff;
 
         currentWave = 0;

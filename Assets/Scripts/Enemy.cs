@@ -8,7 +8,7 @@ public class Enemy : MonoBehaviour
     #region Properties
 
 	public int size { get; private set; }
-	public bool isPooled { get; set; }
+	public bool isPooled;
 
     #endregion
 
@@ -24,7 +24,6 @@ public class Enemy : MonoBehaviour
 
 	private void Awake()
 	{
-		isPooled = true;
 		size = 0;
 		myRB = GetComponent<Rigidbody2D> ();
 		myRenderer = GetComponent<SpriteRenderer> ();
@@ -46,7 +45,7 @@ public class Enemy : MonoBehaviour
 
 	private void Move()
 	{
-		myRB.MovePosition (transform.position - new Vector3(Time.deltaTime, 0, 0));
+		myRB.MovePosition (transform.position + (Vector3.left * Time.deltaTime * GameManager.speed));
 	}
 
     #endregion
