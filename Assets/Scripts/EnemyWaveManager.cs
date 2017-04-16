@@ -35,7 +35,7 @@ public class EnemyWaveManager : MonoBehaviour
 
 	private void Awake()
 	{
-		_groupDelay = new WaitForSeconds (1.2f);
+		_groupDelay = new WaitForSeconds (1.7f);
 		_enemiesInWave = new List<Enemy> ();
 	}
 
@@ -130,16 +130,17 @@ public class EnemyWaveManager : MonoBehaviour
 				}
 				_enemiesInWave [j].SetPosition(_enemyRootPosition + newPos);
 				currentGroup.Add (newPos);
+			}
 
-				currentIndex = j;
-
+			for (int j = currentIndex; j < targetIndex; j++) 
+			{
 				_enemiesInWave [j].isPooled = false;
-				print ("Here");
+
+				currentIndex = j+1;
 			}
 
 			yield return _groupDelay;
 		}
-		print ("Here Too");
 	}
 
 	private bool IsValidGap(Vector3 myPosition, List<Vector3> groupPositions)
@@ -152,7 +153,7 @@ public class EnemyWaveManager : MonoBehaviour
 		bool value = true;
 		for (int i = 0; i < groupPositions.Count; i++)
 		{
-			if (Vector3.Distance (myPosition, groupPositions [i]) > _minVertGap)
+			if (Vector3.Distance (myPosition, groupPositions [i]) < _minVertGap)
 			{
 				value = false;
 			}
