@@ -32,6 +32,7 @@ public class PlayerController : MonoBehaviour
     private WaitForSeconds _waitForGasRelease;
 
     private bool _isInvincible;
+	private Collider2D _collider;
     private WaitForSeconds _waitForInvincibilityDone;
 
     private ObjectPool<BulletController> _bulletsPool;
@@ -50,6 +51,11 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region Private Methods
+
+	private void Awake()
+	{
+		_collider = GetComponent<Collider2D> ();
+	}
 
     private void Start()
     {
@@ -172,7 +178,7 @@ public class PlayerController : MonoBehaviour
 
             if (enemy != null && !_isInvincible)
             {
-                MoveColumns(-enemy.size);
+				MoveColumns(-(enemy.size + 1));
                 StartCoroutine(HitByEnemy());
             }
         }
@@ -197,9 +203,11 @@ public class PlayerController : MonoBehaviour
     {
         _spriteAnimator.SetBool("IsInvincible", true);
         _isInvincible = true;
+		_collider.enabled = false;
 
         yield return _waitForInvincibilityDone;
 
+		_collider.enabled = true;
         _isInvincible = false;
         _spriteAnimator.SetBool("IsInvincible", false);
     }
